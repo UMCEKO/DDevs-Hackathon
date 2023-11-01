@@ -6,7 +6,8 @@
 	"main": "src/index.ts",
 	"scripts": {
 		"build": "tsc",
-		"dev": "ts-node dist/index.js",
+		"dev": "ts-node src/index.ts",
+		"start": "tsc && node dist/index.js",
 		"lint": "eslint ./src/",
 		"format:check": "prettier --check .",
 		"format": "prettier --write ."
