@@ -1,7 +1,7 @@
-import { ChatInputCommandInteraction, Events } from 'discord.js'
-import { Group, changeUserToken, db } from '../../fn/dbfn'
-import { quickEmbedBuilder } from '../../fn/dcFn'
-import { client } from '../../index'
+import {ChatInputCommandInteraction, Events} from 'discord.js'
+import {changeUserCredits, db, Group} from '../../fn/dbfn'
+import {quickEmbedBuilder} from '../../fn/dcFn'
+import {client} from '../../index'
 
 module.exports = {
 	name: Events.InteractionCreate,
@@ -24,9 +24,6 @@ module.exports = {
 				})
 				return
 			}
-			const userRole = await db.getRole(dbuser.role_id)
-			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			const targetRole = await db.getRole(data.permission || 'user')
 			const requiredTokens = data.minimumToken || data.tokenUsage || 0
 			if (db.totalTokens(dbuser, dbgroup) < requiredTokens) {
 				const embed = new quickEmbedBuilder(
@@ -37,7 +34,7 @@ module.exports = {
 						'\nHow much you have: ' +
 						db.totalTokens(dbuser, dbgroup) +
 						'\nYou will be given ' +
-						userRole.daily_tokens +
+						dbuser.daily_tokens +
 						' tokens everyday at 3 AM.' +
 						'\nDaha fazla token almak için özelden /profil yazıp aşağıda yer alan yönergeleri takip ediniz.',
 					'error',
@@ -49,10 +46,10 @@ module.exports = {
 				await db.useToken(dbuser, data.tokenUsage, dbgroup, true)
 				tokenUsed = true
 			}
-			await data.execute(interaction, dbuser, userRole, dbgroup)
+			await data.execute(interaction, dbuser, dbgroup)
 		} catch (error) {
 			console.log(error)
-			if (tokenUsed) await changeUserToken(interaction.user.id, data.tokenUsage || 0)
+			if (tokenUsed) await changeUserCredits(interaction.user.id, data.tokenUsage || 0)
 			if (error !== 'CE') {
 				try {
 					const msg = {

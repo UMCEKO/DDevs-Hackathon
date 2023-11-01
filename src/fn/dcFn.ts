@@ -1,4 +1,4 @@
-import { EmbedBuilder } from 'discord.js'
+import {EmbedBuilder} from 'discord.js'
 
 class quickEmbedBuilder extends EmbedBuilder {
 	constructor(title: string, content: string, type: 'warning' | 'success' | 'error') {

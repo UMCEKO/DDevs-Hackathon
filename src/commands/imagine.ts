@@ -1,12 +1,8 @@
-import {
-	APIApplicationCommandOptionChoice,
-	EmbedBuilder,
-	SlashCommandBuilder,
-	TextChannel,
-} from 'discord.js'
-import { SDXLStyles, imagine } from '../fn/complexfn'
-import { IDiscordCommand } from '../fn/interfaces'
-import { YildizAI } from '../index'
+import {APIApplicationCommandOptionChoice, EmbedBuilder, SlashCommandBuilder, TextChannel,} from 'discord.js'
+import {imagine, SDXLStyles} from '../fn/complexfn'
+import {IDiscordCommand} from '../fn/interfaces'
+import {YildizAI} from '../index'
+
 interface optionifiedStyle {
 	name: string
 	value: string
@@ -128,8 +124,7 @@ module.exports = {
 	minimumToken: undefined,
 	tokenUsage: 10000,
 	permission: 'user',
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	execute: async (interaction, dbuser, userRole, dbGroup) => {
+	execute: async (interaction, dbuser, dbGroup) => {
 		const model: 'anime' | 'sdxl' =
 			(interaction.options.getString('model') as 'anime' | 'sdxl' | null) || 'sdxl'
 		const negativePr = interaction.options.getString('negative-prompt') || ''

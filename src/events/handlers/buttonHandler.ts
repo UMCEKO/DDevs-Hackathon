@@ -1,5 +1,5 @@
-import { ButtonInteraction, Events } from 'discord.js'
-import { client } from '../../index'
+import {ButtonInteraction, Events} from 'discord.js'
+import {client} from '../../index'
 
 module.exports = {
 	name: Events.InteractionCreate,
@@ -7,8 +7,7 @@ module.exports = {
 		if (!interaction.isButton()) return
 		const splitter = '$'
 		const args = interaction.customId.split(splitter)
-		// eslint-disable-next-line @typescript-eslint/ban-types
-		const button: { name: string; execute: Function } = client.buttons.get(args[0])
+		const button: { name: string; execute: (interaction: any, args: any)=>Promise<undefined> } = client.buttons.get(args[0])
 		if (!button) {
 			console.error(`No buttons matching ${args[0]} was found.`)
 			return

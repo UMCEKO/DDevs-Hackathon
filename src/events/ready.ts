@@ -1,11 +1,12 @@
-import { EmbedBuilder, Events, TextChannel } from 'discord.js'
+import {EmbedBuilder, Events, TextChannel} from 'discord.js'
 import * as fs from 'fs'
-import { sleep } from 'openai/core'
+import {sleep} from 'openai/core'
 import * as path from 'path'
-import { censorImage, generateImage } from '../fn/basicFn'
-import { DatabaseParams } from '../fn/complexfn'
-import { Queue, changeUserToken, getNextPrompt, removeQueue } from '../fn/dbfn'
-import { client, imagesPath } from '../index'
+import {censorImage, generateImage} from '../fn/basicFn'
+import {DatabaseParams} from '../fn/complexfn'
+import {changeUserCredits, getNextPrompt, Queue, removeQueue} from '../fn/dbfn'
+import {client, imagesPath} from '../index'
+
 module.exports = {
 	name: Events.ClientReady,
 	once: true,
@@ -158,9 +159,8 @@ async function startImageGeneration(bool: boolean) {
 										.setImage('http://umceko.com:7836/images/generations/' + fileName + '.png'),
 						],
 					})
-					// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				} catch (e: any) {
-					await changeUserToken(prompt.author, client.commands.get('imagine')?.tokenUsage || 0)
+					await changeUserCredits(prompt.author, client.commands.get('imagine')?.tokenUsage || 0)
 
 					if (e?.cause?.errno === -4078) {
 						await channel.send({
@@ -190,7 +190,7 @@ async function startImageGeneration(bool: boolean) {
 				}
 			} catch (e) {
 				console.log(e)
-				await changeUserToken(prompt.author, client.commands.get('imagine')?.tokenUsage || 0)
+				await changeUserCredits(prompt.author, client.commands.get('imagine')?.tokenUsage || 0)
 			} finally {
 				await removeQueue(prompt.queueID)
 			}

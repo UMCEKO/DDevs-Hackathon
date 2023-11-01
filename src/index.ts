@@ -1,10 +1,13 @@
-import { Client, Collection, GatewayIntentBits, REST, Routes } from 'discord.js'
+import {Client, Collection, GatewayIntentBits, REST, Routes} from 'discord.js'
 import 'dotenv/config'
 import * as openai from 'openai'
 import path from 'path'
-import { getAllFileAbsDirs, getAllFileRelDirs } from './fn/basicFn'
-import { env } from './fn/env'
-import { IDiscordCommand } from './fn/interfaces'
+import {getAllFileAbsDirs, getAllFileRelDirs} from './fn/basicFn'
+import {env} from './fn/env'
+import {IDiscordCommand} from './fn/interfaces'
+import {db} from "./fn/dbfn";
+import * as fs from "fs";
+
 
 export const YildizAI = new openai.OpenAI({
 	apiKey: env.GPT_API_KEY,
@@ -12,7 +15,6 @@ export const YildizAI = new openai.OpenAI({
 
 export const client = new Client({
 	intents: [
-		GatewayIntentBits.Guilds,
 		GatewayIntentBits.GuildMessages,
 		GatewayIntentBits.GuildMembers,
 		GatewayIntentBits.MessageContent,
@@ -23,6 +25,7 @@ client.login(env.DC_TOKEN).catch((e) => console.log(e))
 //discord command handler
 client.commands = new Collection()
 const dccommandsPath = path.join(__dirname, 'commands')
+if (!fs.existsSync(dccommandsPath)) fs.mkdirSync(dccommandsPath)
 const dccommandFiles = getAllFileRelDirs(dccommandsPath).filter(
 	(file) => file.endsWith('.js') || file.endsWith('.ts'),
 )
@@ -49,7 +52,6 @@ if (registerCommands) {
 			const data = (await rest.put(
 				Routes.applicationCommands('1124417243854422097'),
 				{ body: client.commands.map((value) => value.command) },
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			)) as any[]
 			console.log(`Successfully reloaded ${data.length} application (/) commands.`)
 		} catch (error) {
@@ -61,6 +63,7 @@ if (registerCommands) {
 
 //discord event handler
 const dceventsPath = path.join(__dirname, 'events')
+if (!fs.existsSync(dceventsPath)) fs.mkdirSync(dceventsPath)
 const dceventFiles = getAllFileAbsDirs(dceventsPath).filter(
 	(file) => file.endsWith('.js') || file.endsWith('.ts'),
 )
@@ -77,6 +80,7 @@ for (const file of dceventFiles) {
 //discord button handler
 client.buttons = new Collection()
 const buttonsPath = path.join(__dirname, 'buttons')
+if (!fs.existsSync(buttonsPath)) fs.mkdirSync(buttonsPath)
 const buttonFiles = getAllFileRelDirs(buttonsPath).filter(
 	(file) => file.endsWith('.js') || file.endsWith('.ts'),
 )

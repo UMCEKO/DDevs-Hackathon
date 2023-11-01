@@ -1,15 +1,9 @@
-import {
-	ButtonInteraction,
-	ChatInputCommandInteraction,
-	Collection,
-	SlashCommandBuilder,
-} from 'discord.js'
-import { Group, Role, User } from './dbfn'
+import {ButtonInteraction, ChatInputCommandInteraction, Collection, SlashCommandBuilder,} from 'discord.js'
+import {Group, User} from './dbfn'
 
 export * from 'discord.js'
 declare module 'discord.js' {
 	export interface Client {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		buttons: Collection<any, any>
 		commands: Collection<string, IDiscordCommand>
 	}
@@ -20,7 +14,6 @@ export interface IDiscordCommand {
 	execute: (
 		interaction: ChatInputCommandInteraction,
 		dbuser: User,
-		userRole: Role,
 		dbGroup: Group | null,
 	) => Promise<void>
 	minimumToken: number | undefined

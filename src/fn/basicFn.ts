@@ -1,7 +1,8 @@
 import axios from 'axios'
 import * as fs from 'fs'
 import * as path from 'path'
-import { ImagineRequest } from './complexfn'
+import {ImagineRequest} from './complexfn'
+
 export async function censorImage(base64Img: string): Promise<string> {
 	const data = await axios.post('http://127.0.0.1:8189/nsfwFilter', {
 		image: base64Img,

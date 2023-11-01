@@ -1,6 +1,6 @@
-import { EmbedBuilder, SlashCommandBuilder, User } from 'discord.js'
-import { User as DBUser, Group, Role, db } from '../fn/dbfn'
-import { IDiscordCommand } from '../fn/interfaces'
+import {EmbedBuilder, SlashCommandBuilder, User} from 'discord.js'
+import {db, Group, User as DBUser} from '../fn/dbfn'
+import {IDiscordCommand} from '../fn/interfaces'
 
 module.exports = {
 	command: new SlashCommandBuilder()
@@ -17,18 +17,17 @@ module.exports = {
 	minimumToken: undefined,
 	tokenUsage: undefined,
 	permission: 'user',
-	execute: async (interaction, dbuser, userRole, dbGroup) => {
+	execute: async (interaction, dbuser, dbGroup) => {
 		const targetUser = interaction.options.getUser('user')
 		if (targetUser) {
 			const tuser = await db.getUser(targetUser.id)
-			const trole = await db.getRoleOf(targetUser.id)
 			await interaction.reply({
-				embeds: [getProfile(targetUser, tuser, trole, dbGroup, interaction.locale)],
+				embeds: [getProfile(targetUser, tuser, dbGroup, interaction.locale)],
 			})
 			return
 		} else {
 			await interaction.reply({
-				embeds: [getProfile(interaction.user, dbuser, userRole, dbGroup, interaction.locale)],
+				embeds: [getProfile(interaction.user, dbuser, dbGroup, interaction.locale)],
 			})
 			return
 		}
@@ -38,7 +37,6 @@ module.exports = {
 const getProfile = (
 	user: User,
 	dbuser: DBUser,
-	userRole: Role,
 	dbgroup: Group | null,
 	locale: string | undefined,
 ): EmbedBuilder => {
@@ -51,11 +49,6 @@ const getProfile = (
 				{
 					name: 'Kullanıcı',
 					value: `<@${user.id}>`,
-					inline: false,
-				},
-				{
-					name: 'Rol',
-					value: userRole.role_name,
 					inline: false,
 				},
 				{
@@ -93,11 +86,6 @@ const getProfile = (
 				{
 					name: 'User',
 					value: `<@${user.id}>`,
-					inline: false,
-				},
-				{
-					name: 'Role',
-					value: userRole.role_name,
 					inline: false,
 				},
 				{

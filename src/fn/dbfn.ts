@@ -1,6 +1,6 @@
-import * as path from 'path'
-import * as sqlite from 'sqlite3'
-import { DatabaseParams } from './complexfn'
+import * as mysql from 'mysql2'
+import {DatabaseParams} from './complexfn'
+import {env} from "./env";
 
 interface Queue {
 	queueID: number
@@ -13,11 +13,15 @@ interface Queue {
 	platform: 'discord' | 'whatsapp' | 'telegram'
 	locale: string
 }
-export const database = new sqlite.Database(path.join(__dirname, '../../mainDb.sqlite'))
+export const database = mysql.createConnection({
+	database: env.DB_NAME,
+	user: env.DB_USER,
+	password: env.DB_PASS,
+	host: `${env.DB_HOST}`
+})
 
 class User {
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	constructor(userid: string, platformid: number) {
+	constructor(userid: string) {
 		this.user_id = userid
 	}
 	id?: number
@@ -36,27 +40,13 @@ interface Group {
 	auto_moderation: boolean
 }
 
-interface Role {
-	role_id: number
-	role_name: string
-	weight: number
-	daily_tokens: number
-}
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-class ImageGenParams {
-	styles: string[] = []
-	width: number = 1024
-}
-
-class DBCache {
+class SQLOrm {
 	async getUser(targetUser: string): Promise<User> {
 		let QRes = (await QueryDB(`SELECT * FROM users WHERE user_id = '${targetUser}'`)) as User[]
 		if (QRes.length !== 0) return QRes[0]
 		try {
-			const defaultRole = await this.getRole(0)
 			await ExecuteDB(
-				`INSERT INTO users(user_id, daily_tokens) VALUES ('${targetUser}', ${defaultRole.daily_tokens});`,
+				`INSERT INTO users(user_id, daily_tokens) VALUES ('${targetUser}', ${env.DAILY_TOKENS});`,
 			)
 		} catch (e) {
 			console.log(e)
@@ -95,22 +85,6 @@ class DBCache {
 			`UPDATE servers SET servers.is_blacklisted = not servers.is_blacklisted WHERE group_id = '${groupid}';`,
 		)
 	}
-	async getRole(roleNameOrId: string | number): Promise<Role> {
-		if (typeof roleNameOrId === 'string') {
-			return (
-				(await QueryDB(`SELECT * FROM roles WHERE role_name = '${roleNameOrId}'`)) as Role[]
-			)[0]
-		} else {
-			return ((await QueryDB(`SELECT * FROM roles WHERE role_id = '${roleNameOrId}'`)) as Role[])[0]
-		}
-	}
-	async getRoleOf(userid: string): Promise<Role> {
-		return (
-			(await QueryDB(
-				`SELECT * FROM roles WHERE role_id = (SELECT role_id FROM users WHERE user_id = '${userid}');`,
-			)) as Role[]
-		)[0]
-	}
 	totalTokens(user: User, dbgroup: Group | null) {
 		return user.daily_tokens + user.paid_tokens + (dbgroup?.group_tokens ? dbgroup.group_tokens : 0)
 	}
@@ -130,11 +104,11 @@ SET daily_tokens = daily_token_payout;
 
 		if (dbgroup && dbgroup.group_tokens !== 0) {
 			if (dbgroup.group_tokens >= toBeSubbed) {
-				await changeGroupToken(dbgroup.group_id, -toBeSubbed)
+				await changeGroupCredits(dbgroup.group_id, -toBeSubbed)
 				return true
 			} else {
 				toBeSubbed -= dbgroup.group_tokens
-				await changeGroupToken(dbgroup.group_id, -dbgroup.group_tokens)
+				await changeGroupCredits(dbgroup.group_id, -dbgroup.group_tokens)
 			}
 		}
 
@@ -165,15 +139,10 @@ WHERE user_id = '${user.user_id}';`)
 	}
 }
 
-export const db: DBCache = new DBCache()
-export async function prepDatabase() {
-	database.exec(``)
-}
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function QueryDB(sql: string, params: any[] = []): Promise<any> {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	return new Promise<any>((resolve, reject) => {
-		database.get(sql, params, (err, results) => {
+export const db: SQLOrm = new SQLOrm()
+async function QueryDB(sql: string, values: string[] = []): Promise<any[] > {
+	return new Promise<any[]>((resolve, reject) => {
+		database.query(sql, values, (err, results: any[]) => {
 			if (err) {
 				reject(err)
 			}
@@ -182,7 +151,7 @@ async function QueryDB(sql: string, params: any[] = []): Promise<any> {
 	})
 }
 
-async function changeUserToken(author: string, tokenAmt: number, paid = false) {
+async function changeUserCredits(author: string, tokenAmt: number, paid = false) {
 	if (paid) {
 		await ExecuteDB(
 			`UPDATE users SET paid_tokens = users.paid_tokens + ${tokenAmt} WHERE user_id = '${author}';`,
@@ -194,13 +163,13 @@ async function changeUserToken(author: string, tokenAmt: number, paid = false) {
 	}
 }
 
-async function changeGroupToken(groupid: string, tokenDelta: number) {
+async function changeGroupCredits(groupid: string, tokenDelta: number) {
 	await ExecuteDB(
 		`UPDATE servers SET servers.group_tokens = servers.group_tokens + ${tokenDelta} WHERE group_id = '${groupid}';`,
 	)
 }
 
-async function setGroupToken(groupid: string, tokenCnt: number) {
+async function setGroupCredits(groupid: string, tokenCnt: number) {
 	await ExecuteDB(
 		`UPDATE servers SET servers.group_tokens = ${tokenCnt} WHERE group_id = '${groupid}';`,
 	)
@@ -208,7 +177,7 @@ async function setGroupToken(groupid: string, tokenCnt: number) {
 
 async function ExecuteDB(sql: string) {
 	return new Promise((resolve, reject) => {
-		database.exec(sql, (err) => {
+		database.query(sql, (err: undefined) => {
 			if (err) {
 				reject(err)
 			}
@@ -245,7 +214,7 @@ async function clearExpiredCooldowns(cooldown: number) {
 	await ExecuteDB(sql)
 }
 
-async function getQueue(): Promise<Array<Queue>> {
+async function getQueue(): Promise<Queue[]> {
 	const sql = `SELECT * FROM queue ORDER BY queueID;`
 	return await QueryDB(sql)
 }
@@ -269,21 +238,20 @@ async function getNextPrompt(): Promise<Queue> {
 }
 
 export {
-	DBCache,
+	SQLOrm,
 	ExecuteDB,
 	Group,
 	QueryDB,
 	Queue,
-	Role,
 	User,
 	addQueue,
-	changeGroupToken,
-	changeUserToken,
+	changeGroupCredits,
+	changeUserCredits,
 	clearExpiredCooldowns,
 	getNextPrompt,
 	getQueue,
 	removeQueue,
 	setAutoMod,
-	setGroupToken,
+	setGroupCredits,
 	setRole,
 }

@@ -1,5 +1,5 @@
 import myqsl from 'mysql2'
-import { env } from './env'
+import {env} from './env'
 
 export const database = myqsl.createConnection({
 	host: env.DB_HOST,
