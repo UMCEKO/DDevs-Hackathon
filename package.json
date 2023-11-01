@@ -1,4 +1,16 @@
 {
+  "name": "ddevs-hackathon-bot",
+  "private": true,
+  "version": "0.0.1",
+  "description": "Discord Developers Hackathon - Bot",
+  "main": "src/index.ts",
+  "keywords": [
+    "discord-bot",
+    "hackathon",
+    "dc-bot"
+  ],
+  "author": "DDevs Hackathon Team",
+  "license": "ISC",
   "dependencies": {
     "@types/express": "^4.17.20",
     "axios": "^1.6.0",
