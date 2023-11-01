@@ -3,33 +3,33 @@ import {
 	ChatInputCommandInteraction,
 	Collection,
 	SlashCommandBuilder,
-} from "discord.js";
-import { Group, Role, User } from "./dbfn";
+} from 'discord.js'
+import { Group, Role, User } from './dbfn'
 
-export * from "discord.js";
-declare module "discord.js" {
+export * from 'discord.js'
+declare module 'discord.js' {
 	export interface Client {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		buttons: Collection<any, any>;
-		commands: Collection<string, IDiscordCommand>;
+		buttons: Collection<any, any>
+		commands: Collection<string, IDiscordCommand>
 	}
 }
 
 export interface IDiscordCommand {
-	command: SlashCommandBuilder;
+	command: SlashCommandBuilder
 	execute: (
 		interaction: ChatInputCommandInteraction,
 		dbuser: User,
 		userRole: Role,
-		dbGroup: Group | null
-	) => Promise<void>;
-	minimumToken: number | undefined;
-	tokenUsage: number | undefined;
-	permission: string | undefined;
+		dbGroup: Group | null,
+	) => Promise<void>
+	minimumToken: number | undefined
+	tokenUsage: number | undefined
+	permission: string | undefined
 }
 export interface IDiscordButton {
-	name: string;
-	execute: (interaction: ButtonInteraction, args: string[]) => Promise<void>;
+	name: string
+	execute: (interaction: ButtonInteraction, args: string[]) => Promise<void>
 }
 export enum ApplicationCommandOptionType {
 	Subcommand = 1,
