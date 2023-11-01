@@ -1,23 +1,39 @@
 {
-  "name": "ddevs-hackathon-bot",
-  "private": true,
-  "version": "0.0.1",
-  "description": "Discord Developers Hackathon - Bot",
-  "main": "src/index.ts",
-  "keywords": [
-    "discord-bot",
-    "hackathon",
-    "dc-bot"
-  ],
-  "author": "DDevs Hackathon Team",
-  "license": "ISC",
-  "dependencies": {
-    "@types/express": "^4.17.20",
-    "axios": "^1.6.0",
-    "discord.js": "^14.13.0",
-    "express": "^4.18.2",
-    "openai": "^4.14.2",
-    "sqlite": "^5.0.1",
-    "sqlite3": "^5.1.6"
-  }
+	"name": "ddevs-hackathon-bot",
+	"private": true,
+	"version": "0.0.1",
+	"description": "Discord Developers Hackathon - Bot",
+	"main": "src/index.ts",
+	"scripts": {
+		"build": "tsc",
+		"dev": "ts-node dist/index.js",
+		"lint": "eslint ./src/",
+		"format:check": "prettier --check .",
+		"format": "prettier --write ."
+	},
+	"keywords": [
+		"discord-bot",
+		"hackathon",
+		"dc-bot"
+	],
+	"author": "DDevs Hackathon Team",
+	"license": "ISC",
+	"dependencies": {
+		"@types/express": "^4.17.20",
+		"axios": "^1.6.0",
+		"discord.js": "^14.12.1",
+		"dotenv": "^16.3.1",
+		"envalid": "^8.0.0",
+		"express": "^4.18.2",
+		"openai": "^4.14.2",
+		"sqlite": "^5.0.1",
+		"sqlite3": "^5.1.6"
+	},
+	"devDependencies": {
+		"@typescript-eslint/eslint-plugin": "^6.9.1",
+		"@typescript-eslint/parser": "^6.9.1",
+		"eslint": "^8.52.0",
+		"prettier": "3.0.3",
+		"ts-node": "^10.9.1"
+	}
 }
