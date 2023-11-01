@@ -5,7 +5,6 @@ import path from 'path'
 import {getAllFileAbsDirs, getAllFileRelDirs} from './fn/basicFn'
 import {env} from './fn/env'
 import {IDiscordCommand} from './fn/interfaces'
-import {db} from "./fn/dbfn";
 import * as fs from "fs";
 
 
