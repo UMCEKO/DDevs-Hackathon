@@ -6,7 +6,9 @@
 	"main": "src/index.ts",
 	"scripts": {
 		"dev": "ts-node src/index.ts",
-		"lint": "eslint ./src/"
+		"lint": "eslint ./src/",
+		"format:check": "prettier --check .",
+		"format": "prettier --write ."
 	},
 	"keywords": [
 		"discord-bot",
@@ -30,6 +32,7 @@
 		"@typescript-eslint/eslint-plugin": "^6.9.1",
 		"@typescript-eslint/parser": "^6.9.1",
 		"eslint": "^8.52.0",
+		"prettier": "3.0.3",
 		"ts-node": "^10.9.1"
 	}
 }
