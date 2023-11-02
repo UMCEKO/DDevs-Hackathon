@@ -1,7 +1,12 @@
-import {APIApplicationCommandOptionChoice, EmbedBuilder, SlashCommandBuilder, TextChannel,} from 'discord.js'
-import {imagine, SDXLStyles} from '../fn/complexfn'
-import {IDiscordCommand} from '../fn/interfaces'
-import {YildizAI} from '../index'
+import {
+	APIApplicationCommandOptionChoice,
+	EmbedBuilder,
+	SlashCommandBuilder,
+	TextChannel,
+} from 'discord.js'
+import { imagine, SDXLStyles } from '../fn/complexfn'
+import { IDiscordCommand } from '../fn/interfaces'
+import { openai } from '../index'
 
 interface optionifiedStyle {
 	name: string
@@ -177,7 +182,7 @@ module.exports = {
 		//     throw "CE"
 		// }
 		if (!channel.nsfw) {
-			const modResponse = await YildizAI.moderations.create({
+			const modResponse = await openai.moderations.create({
 				model: 'text-moderation-latest',
 				input: positivePr,
 			})
@@ -214,7 +219,6 @@ module.exports = {
 			interaction.channel.id,
 			'0',
 			interaction.guild?.id || null,
-			'discord',
 		)
 		if (result.code === 0) {
 			await interaction.reply({

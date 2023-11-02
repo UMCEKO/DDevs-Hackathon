@@ -186,7 +186,6 @@ async function addQueue(
 	messageID: string,
 	author: string,
 	groupid: string | null,
-	platform: 'whatsapp' | 'discord' | 'telegram',
 	locale: string | undefined,
 ) {
 	await ExecuteDB(
@@ -194,7 +193,7 @@ async function addQueue(
 			JSON.stringify(requestParams),
 		)}', '${chatID}', '${messageID}', '${author}', ${Boolean(
 			groupid,
-		)}, '${groupid}', '${platform}', '${locale}')`,
+		)}, '${groupid}', 'discord', '${locale}')`,
 	)
 }
 

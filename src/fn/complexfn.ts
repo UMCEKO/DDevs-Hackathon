@@ -1137,8 +1137,7 @@ async function imagine(
 	userid: string,
 	chatid: string,
 	messageid: string,
-	groupid: string | null,
-	platform: 'whatsapp' | 'discord' | 'telegram',
+	groupid: string | null
 ) {
 	if (generationOptions.positivePrompt.length === 0) {
 		return {
@@ -1229,7 +1228,6 @@ async function imagine(
 		messageid,
 		userid,
 		groupid,
-		platform,
 		generationOptions.locale,
 	)
 	if (queue === 0) {
