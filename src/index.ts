@@ -40,7 +40,7 @@ for (const file of dccommandFiles) {
 		client.commands.set(commandData.command.name, commandData)
 	}
 }
-const registerCommands = false
+const registerCommands = env.REGISTER_COMMANDS
 if (registerCommands) {
 	const rest = new REST().setToken(env.DC_TOKEN)
 	;(async () => {
