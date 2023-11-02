@@ -1,13 +1,12 @@
-import {Client, Collection, GatewayIntentBits, REST, Routes} from 'discord.js'
-import * as openai from 'openai'
+import { Client, Collection, GatewayIntentBits, REST, Routes } from 'discord.js'
+import { OpenAI } from 'openai'
 import path from 'path'
-import {getAllFileAbsDirs, getAllFileRelDirs} from './fn/basicFn'
+import { getAllFileAbsDirs, getAllFileRelDirs } from './fn/basicFn'
 import env from './fn/env'
-import {IDiscordCommand} from './fn/interfaces'
-import * as fs from "fs";
+import { IDiscordCommand } from './fn/interfaces'
+import * as fs from 'fs'
 
-
-export const YildizAI = new openai.OpenAI({
+export const openai = new OpenAI({
 	apiKey: env.GPT_API_KEY,
 })
 
@@ -47,10 +46,9 @@ if (registerCommands) {
 		try {
 			console.log(`Started refreshing ${client.commands.size} application (/) commands.`)
 			// The put method is used to fully refresh all commands in the guild with the current set
-			const data = (await rest.put(
-				Routes.applicationCommands(env.CLIENT_ID),
-				{ body: client.commands.map((value) => value.command) },
-			)) as any[]
+			const data = (await rest.put(Routes.applicationCommands(env.CLIENT_ID), {
+				body: client.commands.map((value) => value.command),
+			})) as any[]
 			console.log(`Successfully reloaded ${data.length} application (/) commands.`)
 		} catch (error) {
 			// And of course, make sure you catch and log any errors!
