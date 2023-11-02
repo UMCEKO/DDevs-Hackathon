@@ -94,7 +94,3 @@ for (const file of buttonFiles) {
 }
 
 export const imagesPath = path.join('D:\\generated-images')
-//
-// let app = express()
-// app.use("/", express.static(imagesPath))
-// app.listen(7836)
