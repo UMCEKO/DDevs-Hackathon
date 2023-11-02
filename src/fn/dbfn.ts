@@ -26,7 +26,6 @@ class User {
 	}
 	id?: number
 	user_id: string
-	role_id: number = 0
 	daily_token_payout: number = 0
 	paid_tokens: number = 0
 	daily_tokens: number = 0
@@ -54,18 +53,9 @@ class SQLOrm {
 			QRes = (await QueryDB(`SELECT * FROM users WHERE user_id = '${targetUser}'`)) as User[]
 			console.log(QRes)
 		}
-		await this.calculateTokenPayouts()
 		QRes = (await QueryDB(`SELECT * FROM users WHERE user_id = '${targetUser}'`)) as User[]
 		if (QRes) return QRes[0]
 		else throw 'Error whilst getting an user after creating it.'
-	}
-	async calculateTokenPayouts() {
-		await ExecuteDB(`UPDATE users
-    SET daily_token_payout = (
-    SELECT daily_tokens
-    FROM roles
-    WHERE roles.role_id = users.role_id
-    )`)
 	}
 	async banUser(userid: string) {
 		await ExecuteDB(`UPDATE users SET users.banned = not users.banned WHERE user_id = '${userid}';`)
@@ -225,10 +215,6 @@ async function setAutoMod(groupid: string) {
 	)
 }
 
-async function setRole(userId: string, targetRole: number) {
-	await ExecuteDB(`UPDATE users SET role_id = ${targetRole} WHERE user_id = '${userId}';`)
-	await db.calculateTokenPayouts()
-}
 async function removeQueue(queueID: number) {
 	await ExecuteDB(`DELETE FROM queue WHERE queueID=${queueID};`)
 }
@@ -253,5 +239,4 @@ export {
 	removeQueue,
 	setAutoMod,
 	setGroupCredits,
-	setRole,
 }

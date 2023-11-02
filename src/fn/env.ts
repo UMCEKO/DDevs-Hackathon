@@ -10,6 +10,7 @@ const env = cleanEnv(process.env, {
 	DB_NAME: str(),
 	DB_PORT: port(),
 	DAILY_TOKENS: num(),
+	CLIENT_ID: str(),
 })
 
 export default env
