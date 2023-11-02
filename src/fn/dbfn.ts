@@ -1,6 +1,6 @@
 import * as mysql from 'mysql2'
 import {DatabaseParams} from './complexfn'
-import {env} from "./env";
+import env from "./env";
 
 interface Queue {
 	queueID: number
