@@ -25,8 +25,8 @@ client.buttons = new Collection()
 
 //discord command handler
 const dccommandsPath = path.join(__dirname, 'commands')
-const isCommandsDirExist = fs.existsSync(dccommandsPath)
-if (isCommandsDirExist) {
+const commandsDirExists = fs.existsSync(dccommandsPath)
+if (commandsDirExists) {
 	const dccommandFiles = getAllFileRelDirs(dccommandsPath).filter(
 		(file) => file.endsWith('.js') || file.endsWith('.ts'),
 	)
@@ -64,8 +64,8 @@ if (isCommandsDirExist) {
 
 //discord event handler
 const dceventsPath = path.join(__dirname, 'events')
-const isEventsDirExist = fs.existsSync(dceventsPath)
-if (isEventsDirExist) {
+const eventsDirExists = fs.existsSync(dceventsPath)
+if (eventsDirExists) {
 	const dceventFiles = getAllFileAbsDirs(dceventsPath).filter(
 		(file) => file.endsWith('.js') || file.endsWith('.ts'),
 	)
@@ -83,8 +83,8 @@ if (isEventsDirExist) {
 
 //discord button handler
 const buttonsPath = path.join(__dirname, 'buttons')
-const isButtonsDirExist = fs.existsSync(buttonsPath)
-if (isButtonsDirExist) {
+const buttonsDirExists = fs.existsSync(buttonsPath)
+if (buttonsDirExists) {
 	const buttonFiles = getAllFileRelDirs(buttonsPath).filter(
 		(file) => file.endsWith('.js') || file.endsWith('.ts'),
 	)
