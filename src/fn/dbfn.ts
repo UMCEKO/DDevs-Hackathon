@@ -45,7 +45,7 @@ class SQLOrm {
 		if (QRes.length !== 0) return QRes[0]
 		try {
 			await ExecuteDB(
-				`INSERT INTO users(user_id, daily_tokens) VALUES ('${targetUser}', ${env.DAILY_TOKENS});`,
+				`INSERT INTO users(user_id, daily_tokens, daily_token_payout) VALUES ('${targetUser}', ${env.DAILY_TOKENS}, ${env.DAILY_TOKENS});`,
 			)
 		} catch (e) {
 			console.log(e)
