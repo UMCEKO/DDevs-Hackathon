@@ -35,8 +35,7 @@ module.exports = {
 						db.totalTokens(dbuser, dbgroup) +
 						'\nYou will be given ' +
 						dbuser.daily_tokens +
-						' tokens everyday at 3 AM.' +
-						'\nDaha fazla token almak için özelden /profil yazıp aşağıda yer alan yönergeleri takip ediniz.',
+						' tokens everyday at 3 AM.',
 					'error',
 				)
 				await interaction.reply({ embeds: [embed] })
@@ -55,8 +54,8 @@ module.exports = {
 					const msg = {
 						embeds: [
 							new quickEmbedBuilder(
-								'Hata.',
-								'Bu komut çalıştırılırken bir sorun oluştu. Tokenleriniz iade edildi',
+								'Error.',
+								'There was an error whilst processing this command. You have been refunded your credits.',
 								'error',
 							),
 						],

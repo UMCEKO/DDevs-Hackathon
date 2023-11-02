@@ -1,5 +1,4 @@
 import {Events, Message} from "discord.js";
-import {client} from "../index";
 import env from "../fn/env";
 
 module.exports = {
