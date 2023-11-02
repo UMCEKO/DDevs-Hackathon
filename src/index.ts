@@ -48,7 +48,7 @@ if (registerCommands) {
 			console.log(`Started refreshing ${client.commands.size} application (/) commands.`)
 			// The put method is used to fully refresh all commands in the guild with the current set
 			const data = (await rest.put(
-				Routes.applicationCommands('1124417243854422097'),
+				Routes.applicationCommands(env.CLIENT_ID),
 				{ body: client.commands.map((value) => value.command) },
 			)) as any[]
 			console.log(`Successfully reloaded ${data.length} application (/) commands.`)
