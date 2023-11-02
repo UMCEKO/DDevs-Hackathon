@@ -1,13 +1,12 @@
 import {ChatInputCommandInteraction, Events} from 'discord.js'
 import {changeUserCredits, db, Group} from '../../fn/dbfn'
 import {quickEmbedBuilder} from '../../fn/dcFn'
-import {client} from '../../index'
 
 module.exports = {
 	name: Events.InteractionCreate,
 	async execute(interaction: ChatInputCommandInteraction) {
 		if (!interaction.isChatInputCommand()) return
-		const data = client.commands.get(interaction.commandName)
+		const data = interaction.client.commands.get(interaction.commandName)
 		if (!data) {
 			await interaction.reply({ content: 'Invalid command.', ephemeral: true })
 			return
