@@ -16,8 +16,8 @@ export interface IDiscordCommand {
 		dbuser: User,
 		dbGroup: Group | null,
 	) => Promise<void>
-	minimumToken: number | undefined
-	tokenUsage: number | undefined
+	minimumCreditRequirement: number | undefined
+	creditUsage: number | undefined
 	permission: string | undefined
 }
 export interface IDiscordButton {

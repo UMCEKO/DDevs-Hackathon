@@ -160,7 +160,7 @@ async function startImageGeneration(bool: boolean) {
 						],
 					})
 				} catch (e: any) {
-					await changeUserCredits(prompt.author, client.commands.get('imagine')?.tokenUsage || 0)
+					await changeUserCredits(prompt.author, client.commands.get('imagine')?.creditUsage || 0)
 
 					if (e?.cause?.errno === -4078) {
 						await channel.send({
@@ -190,7 +190,7 @@ async function startImageGeneration(bool: boolean) {
 				}
 			} catch (e) {
 				console.log(e)
-				await changeUserCredits(prompt.author, client.commands.get('imagine')?.tokenUsage || 0)
+				await changeUserCredits(prompt.author, client.commands.get('imagine')?.creditUsage || 0)
 			} finally {
 				await removeQueue(prompt.queueID)
 			}

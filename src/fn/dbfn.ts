@@ -26,15 +26,15 @@ class User {
 	}
 	id?: number
 	user_id: string
-	daily_token_payout: number = 0
-	paid_tokens: number = 0
-	daily_tokens: number = 0
+	daily_credit_payout: number = 0
+	paid_credits: number = 0
+	daily_credits: number = 0
 	banned: boolean = false
 }
 
 interface Group {
 	group_id: string
-	group_tokens: number
+	group_credits: number
 	is_blacklisted: boolean
 	auto_moderation: boolean
 }
@@ -45,7 +45,7 @@ class SQLOrm {
 		if (QRes.length !== 0) return QRes[0]
 		try {
 			await ExecuteDB(
-				`INSERT INTO users(user_id, daily_tokens, daily_token_payout) VALUES ('${targetUser}', ${env.DAILY_TOKENS}, ${env.DAILY_TOKENS});`,
+				`INSERT INTO users(user_id, daily_credits, daily_credit_payout) VALUES ('${targetUser}', ${env.DAILY_CREDITS}, ${env.DAILY_CREDITS});`,
 			)
 		} catch (e) {
 			console.log(e)
@@ -75,53 +75,53 @@ class SQLOrm {
 			`UPDATE servers SET servers.is_blacklisted = not servers.is_blacklisted WHERE group_id = '${groupid}';`,
 		)
 	}
-	totalTokens(user: User, dbgroup: Group | null) {
-		return user.daily_tokens + user.paid_tokens + (dbgroup?.group_tokens ? dbgroup.group_tokens : 0)
+	totalCredits(user: User, dbgroup: Group | null) {
+		return user.daily_credits + user.paid_credits + (dbgroup?.group_credits ? dbgroup.group_credits : 0)
 	}
-	async resetTokens() {
+	async resetCredits() {
 		await ExecuteDB(`
 UPDATE users
-SET daily_tokens = daily_token_payout;
+SET daily_credits = daily_credit_payout;
 `)
 	}
 
-	async useToken(user: User, tokenAmount: number, dbgroup: Group | null, force = true) {
-		if (tokenAmount === 0) return true
-		if (!force && user.daily_tokens + user.paid_tokens + (dbgroup?.group_tokens || 0) < tokenAmount)
+	async useCredits(user: User, creditAmount: number, dbgroup: Group | null, force = true) {
+		if (creditAmount === 0) return true
+		if (!force && user.daily_credits + user.paid_credits + (dbgroup?.group_credits || 0) < creditAmount)
 			return false
-		if (!Number.isInteger(tokenAmount)) return false
-		let toBeSubbed = tokenAmount
+		if (!Number.isInteger(creditAmount)) return false
+		let toBeSubbed = creditAmount
 
-		if (dbgroup && dbgroup.group_tokens !== 0) {
-			if (dbgroup.group_tokens >= toBeSubbed) {
+		if (dbgroup && dbgroup.group_credits !== 0) {
+			if (dbgroup.group_credits >= toBeSubbed) {
 				await changeGroupCredits(dbgroup.group_id, -toBeSubbed)
 				return true
 			} else {
-				toBeSubbed -= dbgroup.group_tokens
-				await changeGroupCredits(dbgroup.group_id, -dbgroup.group_tokens)
+				toBeSubbed -= dbgroup.group_credits
+				await changeGroupCredits(dbgroup.group_id, -dbgroup.group_credits)
 			}
 		}
 
-		if (toBeSubbed && user.daily_tokens) {
-			if (user.daily_tokens >= toBeSubbed) {
-				user.daily_tokens -= toBeSubbed
+		if (toBeSubbed && user.daily_credits) {
+			if (user.daily_credits >= toBeSubbed) {
+				user.daily_credits -= toBeSubbed
 				toBeSubbed = 0
 			} else {
-				toBeSubbed -= user.daily_tokens
-				user.daily_tokens = 0
+				toBeSubbed -= user.daily_credits
+				user.daily_credits = 0
 			}
 		}
-		if (toBeSubbed && user.paid_tokens) {
-			if (user.paid_tokens >= toBeSubbed) {
-				user.paid_tokens -= toBeSubbed
+		if (toBeSubbed && user.paid_credits) {
+			if (user.paid_credits >= toBeSubbed) {
+				user.paid_credits -= toBeSubbed
 				toBeSubbed = 0
 			} else {
-				toBeSubbed -= user.paid_tokens
-				user.paid_tokens = 0
+				toBeSubbed -= user.paid_credits
+				user.paid_credits = 0
 			}
 		}
 		await ExecuteDB(`UPDATE users
-SET paid_tokens = ${user.paid_tokens}, daily_tokens = ${user.daily_tokens}
+SET paid_credits = ${user.paid_credits}, daily_credits = ${user.daily_credits}
 WHERE user_id = '${user.user_id}';`)
 		return toBeSubbed === 0
 
@@ -141,27 +141,27 @@ async function QueryDB(sql: string, values: string[] = []): Promise<any[] > {
 	})
 }
 
-async function changeUserCredits(author: string, tokenAmt: number, paid = false) {
+async function changeUserCredits(author: string, creditAmount: number, paid = false) {
 	if (paid) {
 		await ExecuteDB(
-			`UPDATE users SET paid_tokens = users.paid_tokens + ${tokenAmt} WHERE user_id = '${author}';`,
+			`UPDATE users SET paid_credits = users.paid_credits + ${creditAmount} WHERE user_id = '${author}';`,
 		)
 	} else {
 		await ExecuteDB(
-			`UPDATE users SET daily_tokens = users.daily_tokens + ${tokenAmt} WHERE user_id = '${author}';`,
+			`UPDATE users SET daily_credits = users.daily_credits + ${creditAmount} WHERE user_id = '${author}';`,
 		)
 	}
 }
 
-async function changeGroupCredits(groupid: string, tokenDelta: number) {
+async function changeGroupCredits(groupid: string, creditDifference: number) {
 	await ExecuteDB(
-		`UPDATE servers SET servers.group_tokens = servers.group_tokens + ${tokenDelta} WHERE group_id = '${groupid}';`,
+		`UPDATE servers SET servers.group_credits = servers.group_credits + ${creditDifference} WHERE group_id = '${groupid}';`,
 	)
 }
 
-async function setGroupCredits(groupid: string, tokenCnt: number) {
+async function setGroupCredits(groupid: string, creditAmount: number) {
 	await ExecuteDB(
-		`UPDATE servers SET servers.group_tokens = ${tokenCnt} WHERE group_id = '${groupid}';`,
+		`UPDATE servers SET servers.group_credits = ${creditAmount} WHERE group_id = '${groupid}';`,
 	)
 }
 

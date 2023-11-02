@@ -14,8 +14,8 @@ module.exports = {
 				.setName('user')
 				.setDescription('The user that you want to check the profile of.'),
 		),
-	minimumToken: undefined,
-	tokenUsage: undefined,
+	minimumCreditRequirement: undefined,
+	creditUsage: undefined,
 	permission: 'user',
 	execute: async (interaction, dbuser, dbGroup) => {
 		const targetUser = interaction.options.getUser('user')
@@ -52,28 +52,28 @@ const getProfile = (
 					inline: false,
 				},
 				{
-					name: 'Grup token havuzu',
-					value: dbgroup?.group_tokens.toLocaleString('tr-TR') || '0',
+					name: 'Grup kredi havuzu',
+					value: dbgroup?.group_credits.toLocaleString('tr-TR') || '0',
 					inline: true,
 				},
 				{
-					name: 'Günlük token geliri',
-					value: dbuser.daily_token_payout.toLocaleString('tr-TR'),
+					name: 'Günlük kredi geliri',
+					value: dbuser.daily_credit_payout.toLocaleString('tr-TR'),
 					inline: true,
 				},
 				{
-					name: 'Günlük tokenler',
-					value: dbuser.daily_tokens.toLocaleString('tr-TR'),
+					name: 'Günlük krediler',
+					value: dbuser.daily_credits.toLocaleString('tr-TR'),
 					inline: true,
 				},
 				{
-					name: 'Paralı tokenler',
-					value: dbuser.paid_tokens.toLocaleString('tr-TR'),
+					name: 'Paralı krediler',
+					value: dbuser.paid_credits.toLocaleString('tr-TR'),
 					inline: true,
 				},
 				{
-					name: 'Toplam tokenler',
-					value: db.totalTokens(dbuser, dbgroup).toLocaleString('tr-TR'),
+					name: 'Toplam krediler',
+					value: db.totalCredits(dbuser, dbgroup).toLocaleString('tr-TR'),
 					inline: true,
 				},
 			])
@@ -89,28 +89,28 @@ const getProfile = (
 					inline: false,
 				},
 				{
-					name: 'Group token pool',
-					value: dbgroup?.group_tokens.toLocaleString('en-US') || '0',
+					name: 'Group credit pool',
+					value: dbgroup?.group_credits.toLocaleString('en-US') || '0',
 					inline: true,
 				},
 				{
-					name: 'Daily token income',
-					value: dbuser.daily_token_payout.toLocaleString('en-US'),
+					name: 'Daily credit income',
+					value: dbuser.daily_credit_payout.toLocaleString('en-US'),
 					inline: true,
 				},
 				{
-					name: 'Daily Tokens',
-					value: dbuser.daily_tokens.toLocaleString('en-US'),
+					name: 'Daily credits',
+					value: dbuser.daily_credits.toLocaleString('en-US'),
 					inline: true,
 				},
 				{
-					name: 'Paid tokens',
-					value: dbuser.paid_tokens.toLocaleString('en-US'),
+					name: 'Paid credits',
+					value: dbuser.paid_credits.toLocaleString('en-US'),
 					inline: true,
 				},
 				{
-					name: 'Total tokens',
-					value: db.totalTokens(dbuser, dbgroup).toLocaleString('en-US'),
+					name: 'Total credits',
+					value: db.totalCredits(dbuser, dbgroup).toLocaleString('en-US'),
 					inline: true,
 				},
 			])

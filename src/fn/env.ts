@@ -9,7 +9,7 @@ const env = cleanEnv(process.env, {
 	DB_PASS: str(),
 	DB_NAME: str(),
 	DB_PORT: port(),
-	DAILY_TOKENS: num(),
+	DAILY_CREDITS: num(),
 	CLIENT_ID: str(),
 	REGISTER_COMMANDS: bool(),
 })

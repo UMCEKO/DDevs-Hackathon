@@ -121,10 +121,14 @@ module.exports = {
 					),
 				),
 		),
-	minimumToken: undefined,
-	tokenUsage: 10000,
+	minimumCreditRequirement: undefined,
+	creditUsage: 10000,
 	permission: 'user',
 	execute: async (interaction, dbuser, dbGroup) => {
+		if (!interaction.channel?.isTextBased()) {
+			await interaction.reply('Channel not text based.')
+			return
+		}
 		const model: 'anime' | 'sdxl' =
 			(interaction.options.getString('model') as 'anime' | 'sdxl' | null) || 'sdxl'
 		const negativePr = interaction.options.getString('negative-prompt') || ''
@@ -155,10 +159,6 @@ module.exports = {
 				}
 			}
 		}
-		if (!interaction.channel?.isTextBased()) {
-			await interaction.reply('Channel not text based.')
-			return
-		}
 		const channel = interaction.channel as TextChannel
 		// let det = tinyld.detect(positivePr, {only: ["tr", "en"]})
 		// if (!["en", ""].includes(det)){
@@ -188,11 +188,11 @@ module.exports = {
 							? new EmbedBuilder()
 									.setColor('#de1717')
 									.setTitle('Bu kanalda uygunsuz içerik çizdiremezsiniz!')
-									.setDescription('10000 token ceza yediniz!')
+									.setDescription('10000 kredi ceza yediniz!')
 							: new EmbedBuilder()
 									.setColor('#de1717')
 									.setTitle('You cannot draw this kind of image on this channel!')
-									.setDescription('You have recieved a penalty of 10000 tokens!'),
+									.setDescription('You have recieved a penalty of 10000 credits!'),
 					],
 					ephemeral: true,
 				})

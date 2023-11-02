@@ -12,7 +12,7 @@ module.exports = {
 			await interaction.reply({ content: 'Invalid command.', ephemeral: true })
 			return
 		}
-		let tokenUsed = false
+		let creditUsed = false
 		try {
 			let dbgroup: Group | null = null
 			if (interaction.guildId) dbgroup = await db.getGroup(interaction.guildId)
@@ -24,31 +24,31 @@ module.exports = {
 				})
 				return
 			}
-			const requiredTokens = data.minimumToken || data.tokenUsage || 0
-			if (db.totalTokens(dbuser, dbgroup) < requiredTokens) {
+			const requiredCredits = data.minimumCreditRequirement || data.creditUsage || 0
+			if (db.totalCredits(dbuser, dbgroup) < requiredCredits) {
 				const embed = new quickEmbedBuilder(
 					'Not enough credits!',
 					'You do not have enough credits to use this command..' +
 						'\nMinimum required: ' +
-						requiredTokens +
+						requiredCredits +
 						'\nHow much you have: ' +
-						db.totalTokens(dbuser, dbgroup) +
+						db.totalCredits(dbuser, dbgroup) +
 						'\nYou will be given ' +
-						dbuser.daily_tokens +
-						' tokens everyday at 3 AM.',
+						dbuser.daily_credits +
+						' credits everyday at 3 AM.',
 					'error',
 				)
 				await interaction.reply({ embeds: [embed] })
 				return
 			}
-			if (data.tokenUsage) {
-				await db.useToken(dbuser, data.tokenUsage, dbgroup, true)
-				tokenUsed = true
+			if (data.creditUsage) {
+				await db.useCredits(dbuser, data.creditUsage, dbgroup, true)
+				creditUsed = true
 			}
 			await data.execute(interaction, dbuser, dbgroup)
 		} catch (error) {
 			console.log(error)
-			if (tokenUsed) await changeUserCredits(interaction.user.id, data.tokenUsage || 0)
+			if (creditUsed) await changeUserCredits(interaction.user.id, data.creditUsage || 0)
 			if (error !== 'CE') {
 				try {
 					const msg = {
