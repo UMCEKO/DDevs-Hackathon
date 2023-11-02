@@ -1,9 +1,8 @@
 import {Client, Collection, GatewayIntentBits, REST, Routes} from 'discord.js'
-import 'dotenv/config'
 import * as openai from 'openai'
 import path from 'path'
 import {getAllFileAbsDirs, getAllFileRelDirs} from './fn/basicFn'
-import {env} from './fn/env'
+import env from './fn/env'
 import {IDiscordCommand} from './fn/interfaces'
 import * as fs from "fs";
 
