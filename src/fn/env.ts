@@ -1,6 +1,7 @@
-import {cleanEnv, host, port, str, num} from 'envalid'
+import { cleanEnv, host, port, str, num } from 'envalid'
+import 'dotenv/config'
 
-export const env = cleanEnv(process.env, {
+const env = cleanEnv(process.env, {
 	GPT_API_KEY: str(),
 	DC_TOKEN: str(),
 	DB_HOST: host(),
@@ -8,5 +9,7 @@ export const env = cleanEnv(process.env, {
 	DB_PASS: str(),
 	DB_NAME: str(),
 	DB_PORT: port(),
-	DAILY_TOKENS: num()
+	DAILY_TOKENS: num(),
 })
+
+export default env
