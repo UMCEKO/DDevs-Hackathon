@@ -1,5 +1,4 @@
 import { Events, Message } from 'discord.js'
-import env from '../fn/env'
 import { imagine } from '../fn/complexfn'
 import OpenAI from 'openai'
 import ChatCompletionMessageParam = OpenAI.ChatCompletionMessageParam
