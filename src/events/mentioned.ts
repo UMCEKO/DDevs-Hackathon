@@ -11,12 +11,13 @@ import { quickEmbedBuilder } from '../fn/dcFn'
 // 1000 OpenAI Token price in USD
 const OpenAITokenPrice = 0.004
 // Calculate the amount of tokens you can buy with 1 USD
-// 1 USD =
 const OpenAITokenAmountFor1USD = 1000 / OpenAITokenPrice
+const BotCreditAmountFor1USD = 100000
+
 // Profit percentagex
 const ProfitMultiplier = 2
 // Calculate the final multiplier.
-const TokenRatio = (ProfitMultiplier * 2500000) / OpenAITokenAmountFor1USD
+const CreditRatio = (BotCreditAmountFor1USD / OpenAITokenAmountFor1USD) * ProfitMultiplier
 
 const encoding = tiktoken.getEncodingNameForModel('gpt-3.5-turbo-16k-0613')
 const encoder = tiktoken.getEncoding(encoding)
@@ -92,16 +93,18 @@ module.exports = {
 			return
 		}
 
-		const userTokens = db.totalCredits(
+		const userCredits = db.totalCredits(
 			await db.getUser(message.author.id),
 			await db.getGroup(message.guild.id),
 		)
-		const responseTokenUsage = (encoder.encode(JSON.stringify(messages)).length + 200) * TokenRatio
-		if (userTokens < responseTokenUsage) {
+		const responseCreditUsage = Math.ceil(
+			(encoder.encode(JSON.stringify(messages)).length + 200) * CreditRatio,
+		)
+		if (userCredits < responseCreditUsage) {
 			const embed = new quickEmbedBuilder(
 				'Not enough credits!',
 				'You do not have enough credits to use this command.' +
-					`\nMinimum required: ${responseTokenUsage}` +
+					`\nMinimum required: ${responseCreditUsage}` +
 					`\nHow much you currently have: ${db.totalCredits(
 						await db.getUser(message.author.id),
 						await db.getGroup(message.guild.id),
@@ -116,7 +119,7 @@ module.exports = {
 		}
 		interface IResponseObj {
 			response: ChatCompletion
-			usedToken: number
+			usedCredits: number
 		}
 		console.log(messages)
 		async function getResponse(): Promise<IResponseObj | undefined> {
@@ -144,7 +147,7 @@ module.exports = {
 					temperature: 1,
 				})
 				if (response.usage === undefined) return
-				const usedCredits = response.usage.total_tokens * TokenRatio || 0
+				const usedCredits = Math.ceil(response.usage.total_tokens * CreditRatio) || 0
 				await db.useCredits(
 					await db.getUser(message.author.id),
 					usedCredits,
@@ -153,7 +156,7 @@ module.exports = {
 				)
 				return {
 					response: response,
-					usedToken: usedCredits,
+					usedCredits: usedCredits,
 				}
 			} catch {
 				return await getResponse()
@@ -190,13 +193,13 @@ module.exports = {
 				if (response.usage === undefined || !message.guild) return
 				await db.useCredits(
 					await db.getUser(message.author.id),
-					response.usage.total_tokens * TokenRatio,
+					Math.ceil(response.usage.total_tokens * CreditRatio),
 					await db.getGroup(message.guild.id),
 					true,
 				)
 				return {
 					response: response,
-					usedToken: 0,
+					usedCredits: 0,
 				}
 			} catch (e) {
 				console.log(e)
@@ -211,19 +214,19 @@ module.exports = {
 		const choice = response.response.choices[0]
 		if (choice.finish_reason === 'function_call') {
 			messages[0].content = PROMPTHOWTO
-			let userTokens = db.totalCredits(
+			let userCredits = db.totalCredits(
 				await db.getUser(message.author.id),
 				await db.getGroup(message.guild.id),
 			)
-			const imagenTokenUsage =
-				(encoder.encode(JSON.stringify(messages)).length + 200) * TokenRatio +
+			const imagenCreditUsage =
+				Math.ceil((encoder.encode(JSON.stringify(messages)).length + 200) * CreditRatio) +
 				(message.client.commands.get('imagine')?.creditUsage || 0)
-			if (userTokens < imagenTokenUsage) {
+			if (userCredits < imagenCreditUsage) {
 				const embed = new quickEmbedBuilder(
 					`Not enough credits!`,
 					`You do not have enough credits to use this command.` +
-						`\nUsed tokens: ${response.usedToken}` +
-						`\nMinimum required: ${imagenTokenUsage}` +
+						`\nUsed tokens: ${response.usedCredits}` +
+						`\nMinimum required: ${imagenCreditUsage}` +
 						`\nHow much you currently have: ${db.totalCredits(
 							await db.getUser(message.author.id),
 							await db.getGroup(message.guild.id),
@@ -244,7 +247,7 @@ module.exports = {
 			}
 			const choice = imageResponse.response.choices[0]
 
-			userTokens = db.totalCredits(
+			userCredits = db.totalCredits(
 				await db.getUser(message.author.id),
 				await db.getGroup(message.guild.id),
 			)
