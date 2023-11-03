@@ -23,6 +23,7 @@ client.login(env.DC_TOKEN).catch((e) => console.log(e))
 
 client.commands = new Collection()
 client.buttons = new Collection()
+client.modals = new Collection()
 
 //discord command handler
 const dccommandsPath = path.join(__dirname, 'commands')
@@ -95,6 +96,25 @@ if (buttonsDirExists) {
 		if ('name' in button && 'execute' in button) {
 			console.log(button.name, button)
 			client.buttons.set(button.name, button)
+		} else {
+			console.log(`${file} is either missing name or execute property.`)
+		}
+	}
+}
+
+//discord modal handler
+const modalsPath = path.join(__dirname, 'modals')
+const modalPathExists = fs.existsSync(modalsPath)
+if (modalPathExists) {
+	const modalFiles = getAllFileRelDirs(modalsPath).filter(
+		(file) => file.endsWith('.js') || file.endsWith('.ts'),
+	)
+	for (const file of modalFiles) {
+		// eslint-disable-next-line @typescript-eslint/no-var-requires
+		const modal = require(path.join(modalsPath, file))
+		if ('name' in modal && 'execute' in modal) {
+			console.log(modal.name, modal)
+			client.modals.set(modal.name, modal)
 		} else {
 			console.log(`${file} is either missing name or execute property.`)
 		}
