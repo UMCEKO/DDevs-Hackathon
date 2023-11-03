@@ -16,6 +16,7 @@ export const client = new Client({
 		GatewayIntentBits.GuildMembers,
 		GatewayIntentBits.MessageContent,
 		GatewayIntentBits.GuildVoiceStates,
+		GatewayIntentBits.Guilds,
 	],
 })
 client.login(env.DC_TOKEN).catch((e) => console.log(e))

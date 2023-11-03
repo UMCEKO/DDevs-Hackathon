@@ -1,18 +1,21 @@
-import {EmbedBuilder, Events, TextChannel} from 'discord.js'
+import { EmbedBuilder, Events, TextChannel } from 'discord.js'
 import * as fs from 'fs'
-import {sleep} from 'openai/core'
+import { sleep } from 'openai/core'
 import * as path from 'path'
-import {censorImage, generateImage} from '../fn/basicFn'
-import {DatabaseParams} from '../fn/complexfn'
-import {changeUserCredits, getNextPrompt, Queue, removeQueue} from '../fn/dbfn'
-import {client, imagesPath} from '../index'
+import { censorImage, generateImage } from '../fn/basicFn'
+import { DatabaseParams } from '../fn/complexfn'
+import { changeUserCredits, getNextPrompt, Queue, removeQueue } from '../fn/dbfn'
+import { client, imagesPath } from '../index'
 
 module.exports = {
 	name: Events.ClientReady,
 	once: true,
 	async execute() {
 		console.log('Bot is loaded up!')
-		startImageGeneration(true).then(() => console.log('Image gen has crashed on discord.'))
+		startImageGeneration(true).then(() => {
+			console.log('Image gen has crashed on discord.')
+			process.exit()
+		})
 	},
 }
 async function startImageGeneration(bool: boolean) {
@@ -29,9 +32,7 @@ async function startImageGeneration(bool: boolean) {
 			if (!channel.isTextBased) continue
 
 			try {
-				const dbParam = JSON.parse(
-					Buffer.from(prompt.prompt.buffer).toString('utf-8'),
-				) as DatabaseParams
+				const dbParam = JSON.parse(Buffer.from(prompt.prompt).toString()) as DatabaseParams
 
 				let img
 				try {

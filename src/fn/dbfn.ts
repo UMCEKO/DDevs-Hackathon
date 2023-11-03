@@ -1,6 +1,6 @@
 import * as mysql from 'mysql2'
-import {DatabaseParams} from './complexfn'
-import env from "./env";
+import { DatabaseParams } from './complexfn'
+import env from './env'
 
 interface Queue {
 	queueID: number
@@ -17,7 +17,7 @@ export const database = mysql.createConnection({
 	database: env.DB_NAME,
 	user: env.DB_USER,
 	password: env.DB_PASS,
-	host: `${env.DB_HOST}`
+	host: `${env.DB_HOST}`,
 })
 
 class User {
@@ -76,7 +76,9 @@ class SQLOrm {
 		)
 	}
 	totalCredits(user: User, dbgroup: Group | null) {
-		return user.daily_credits + user.paid_credits + (dbgroup?.group_credits ? dbgroup.group_credits : 0)
+		return (
+			user.daily_credits + user.paid_credits + (dbgroup?.group_credits ? dbgroup.group_credits : 0)
+		)
 	}
 	async resetCredits() {
 		await ExecuteDB(`
@@ -87,7 +89,10 @@ SET daily_credits = daily_credit_payout;
 
 	async useCredits(user: User, creditAmount: number, dbgroup: Group | null, force = true) {
 		if (creditAmount === 0) return true
-		if (!force && user.daily_credits + user.paid_credits + (dbgroup?.group_credits || 0) < creditAmount)
+		if (
+			!force &&
+			user.daily_credits + user.paid_credits + (dbgroup?.group_credits || 0) < creditAmount
+		)
 			return false
 		if (!Number.isInteger(creditAmount)) return false
 		let toBeSubbed = creditAmount
@@ -130,7 +135,7 @@ WHERE user_id = '${user.user_id}';`)
 }
 
 export const db: SQLOrm = new SQLOrm()
-async function QueryDB(sql: string, values: string[] = []): Promise<any[] > {
+async function QueryDB(sql: string, values: string[] = []): Promise<any[]> {
 	return new Promise<any[]>((resolve, reject) => {
 		database.query(sql, values, (err, results: any[]) => {
 			if (err) {
@@ -188,13 +193,12 @@ async function addQueue(
 	groupid: string | null,
 	locale: string | undefined,
 ) {
-	await ExecuteDB(
-		`INSERT INTO queue (prompt, chatID, messageID, author, fromgroup, groupid, platform, locale) VALUES ( '${sanitizeInput(
-			JSON.stringify(requestParams),
-		)}', '${chatID}', '${messageID}', '${author}', ${Boolean(
-			groupid,
-		)}, '${groupid}', 'discord', '${locale}')`,
-	)
+	const sql = `INSERT INTO queue (prompt, chatID, messageID, author, fromgroup, groupid, platform, locale) VALUES ( '${sanitizeInput(
+		JSON.stringify(requestParams),
+	)}', '${chatID}', '${messageID}', '${author}', ${Boolean(
+		groupid,
+	)}, '${groupid}', 'discord', '${locale}')`
+	await ExecuteDB(sql)
 }
 
 async function clearExpiredCooldowns(cooldown: number) {
