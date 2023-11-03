@@ -1,7 +1,9 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js'
+import { IDiscordButton } from '../fn/interfaces'
 
-export const buyCreditsRow = new ActionRowBuilder<ButtonBuilder>()
-export const buyCreditsBtn = new ButtonBuilder()
-	.setLabel('Buy credits')
-	.setStyle(ButtonStyle.Primary)
-	.setCustomId('buy-credits')
+module.exports = {
+	name: 'buy-credits',
+	execute: async (interaction, args) => {
+		//do something
+		const userID = args[0]
+	},
+} as IDiscordButton
