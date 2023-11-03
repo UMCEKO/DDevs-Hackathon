@@ -1,5 +1,5 @@
-import { Stripe } from 'stripe'
 import env from './env'
+import { Stripe } from 'stripe'
 
 const paymentClient = new Stripe(env.STRIPE_SECRET_KEY)
 
@@ -9,7 +9,7 @@ export async function createPayment(
 	centAmountForToken: number,
 	customer_email: string,
 ) {
-	const session = await paymentClient.checkout.sessions.create({
+	return await paymentClient.checkout.sessions.create({
 		payment_method_types: ['card', 'paypal'],
 		line_items: [
 			{
@@ -26,10 +26,8 @@ export async function createPayment(
 		],
 		mode: 'payment',
 		allow_promotion_codes: true,
-		// success_url: 'https://example.com/success',
-		// cancel_url: 'https://example.com/cancel',
+		success_url: 'https://example.com/success',
+		cancel_url: 'https://example.com/cancel',
 		customer_email,
 	})
-
-	return session
 }

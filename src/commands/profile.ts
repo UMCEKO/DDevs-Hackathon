@@ -1,5 +1,11 @@
-import { EmbedBuilder, SlashCommandBuilder, User } from 'discord.js'
-import { buyCreditsRow } from '../buttons/buyCredits'
+import {
+	ActionRowBuilder,
+	ButtonBuilder,
+	ButtonStyle,
+	EmbedBuilder,
+	SlashCommandBuilder,
+	User,
+} from 'discord.js'
 import { User as DBUser, Group, db } from '../fn/dbfn'
 import { IDiscordCommand } from '../fn/interfaces'
 
@@ -19,6 +25,13 @@ module.exports = {
 	creditUsage: undefined,
 	permission: 'user',
 	execute: async (interaction, dbuser, dbGroup) => {
+		const buyCreditsRow = new ActionRowBuilder<ButtonBuilder>()
+		const buyCreditsBtn = new ButtonBuilder()
+			.setLabel('Buy credits')
+			.setStyle(ButtonStyle.Primary)
+			.setCustomId('buy-credits$' + interaction.user.id)
+		buyCreditsRow.addComponents(buyCreditsBtn)
+
 		const targetUser = interaction.options.getUser('user')
 		if (targetUser) {
 			const tuser = await db.getUser(targetUser.id)
