@@ -1,4 +1,4 @@
-import {cleanEnv, host, port, str, num, bool} from 'envalid'
+import { cleanEnv, host, port, str, num, bool } from 'envalid'
 import 'dotenv/config'
 
 const env = cleanEnv(process.env, {
@@ -12,6 +12,7 @@ const env = cleanEnv(process.env, {
 	DAILY_CREDITS: num(),
 	CLIENT_ID: str(),
 	REGISTER_COMMANDS: bool(),
+	STRIPE_SECRET_KEY: str(),
 })
 
 export default env

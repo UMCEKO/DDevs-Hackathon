@@ -1,6 +1,7 @@
-import {EmbedBuilder, SlashCommandBuilder, User} from 'discord.js'
-import {db, Group, User as DBUser} from '../fn/dbfn'
-import {IDiscordCommand} from '../fn/interfaces'
+import { EmbedBuilder, SlashCommandBuilder, User } from 'discord.js'
+import { buyCreditsRow } from '../buttons/buyCredits'
+import { User as DBUser, Group, db } from '../fn/dbfn'
+import { IDiscordCommand } from '../fn/interfaces'
 
 module.exports = {
 	command: new SlashCommandBuilder()
@@ -23,11 +24,13 @@ module.exports = {
 			const tuser = await db.getUser(targetUser.id)
 			await interaction.reply({
 				embeds: [getProfile(targetUser, tuser, dbGroup, interaction.locale)],
+				components: [buyCreditsRow],
 			})
 			return
 		} else {
 			await interaction.reply({
 				embeds: [getProfile(interaction.user, dbuser, dbGroup, interaction.locale)],
+				components: [buyCreditsRow],
 			})
 			return
 		}
