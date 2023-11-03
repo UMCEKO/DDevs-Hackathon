@@ -1,14 +1,24 @@
-import {ButtonInteraction, ChatInputCommandInteraction, Collection, SlashCommandBuilder,} from 'discord.js'
-import {Group, User} from './dbfn'
+import {
+	ButtonInteraction,
+	ChatInputCommandInteraction,
+	Collection,
+	ModalSubmitInteraction,
+	SlashCommandBuilder,
+} from 'discord.js'
+import { Group, User } from './dbfn'
 
 export * from 'discord.js'
 declare module 'discord.js' {
 	export interface Client {
-		buttons: Collection<any, any>
+		buttons: Collection<string, IDiscordButton>
 		commands: Collection<string, IDiscordCommand>
+		modals: Collection<string, IDiscordModal>
 	}
 }
-
+export interface IDiscordModal {
+	name: string
+	execute: (interaction: ModalSubmitInteraction) => Promise<undefined>
+}
 export interface IDiscordCommand {
 	command: SlashCommandBuilder
 	execute: (

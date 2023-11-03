@@ -1,14 +1,14 @@
-import { ButtonInteraction, Events, ModalSubmitInteraction } from 'discord.js'
+import { Events, ModalSubmitInteraction } from 'discord.js'
+import { IDiscordModal } from '../../fn/interfaces'
 
 module.exports = {
 	name: Events.InteractionCreate,
 	async execute(interaction: ModalSubmitInteraction) {
 		if (!interaction.isModalSubmit()) return
-		const modal: { name: string; execute: (interaction: any) => Promise<undefined> } =
-			interaction.client.buttons.get(interaction.customId)
+		const modal: IDiscordModal | undefined = interaction.client.modals.get(interaction.customId)
 
 		if (!modal) {
-			console.error(`No buttons matching ${interaction.customId} was found.`)
+			console.error(`No modals matching ${interaction.customId} was found.`)
 			return
 		}
 		try {

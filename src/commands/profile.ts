@@ -37,13 +37,13 @@ module.exports = {
 			const tuser = await db.getUser(targetUser.id)
 			await interaction.reply({
 				embeds: [getProfile(targetUser, tuser, dbGroup, interaction.locale)],
-				components: [buyCreditsRow],
+				// components: [buyCreditsRow],
 			})
 			return
 		} else {
 			await interaction.reply({
 				embeds: [getProfile(interaction.user, dbuser, dbGroup, interaction.locale)],
-				components: [buyCreditsRow],
+				// components: [buyCreditsRow],
 			})
 			return
 		}

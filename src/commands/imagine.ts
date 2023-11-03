@@ -127,7 +127,7 @@ module.exports = {
 				),
 		),
 	minimumCreditRequirement: undefined,
-	creditUsage: 10000,
+	creditUsage: 1000,
 	permission: 'user',
 	execute: async (interaction, dbuser, dbGroup) => {
 		if (!interaction.channel?.isTextBased()) {
