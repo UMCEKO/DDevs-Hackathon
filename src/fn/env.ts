@@ -12,7 +12,9 @@ const env = cleanEnv(process.env, {
 	DAILY_CREDITS: num(),
 	CLIENT_ID: str(),
 	REGISTER_COMMANDS: bool(),
-	STRIPE_SECRET_KEY: str(),
+	STRIPE_LIVE_SECRET_KEY: str(),
+	STRIPE_DEV_SECRET_KEY: str(),
+	TESTING: bool(),
 })
 
 export default env

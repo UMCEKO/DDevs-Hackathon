@@ -1,7 +1,10 @@
 import { Stripe } from 'stripe'
 import env from './env'
 
-const paymentClient = new Stripe(env.STRIPE_SECRET_KEY)
+const STRIPE_SECRET_KEY =
+	env.TESTING === true ? env.STRIPE_DEV_SECRET_KEY : env.STRIPE_LIVE_SECRET_KEY
+
+const paymentClient = new Stripe(STRIPE_SECRET_KEY)
 type Currency = 'USD' | 'EUR' | 'TRY'
 
 export async function createPayment(currency: Currency, amount: number, email: string) {
