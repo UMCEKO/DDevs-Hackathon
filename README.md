@@ -1,3 +1,3 @@
 # DDevs-Hackathon
 
-This is our DDevs-Hackathon project
+This is our Discord Developers Hackathon project
